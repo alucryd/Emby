@@ -8,6 +8,12 @@ namespace MediaBrowser.Controller.Persistence
     public interface IFileOrganizationRepository
     {
         /// <summary>
+        /// Initializes the repository
+        /// </summary>
+        /// <returns>Task.</returns>
+        Task Initialize();
+
+        /// <summary>
         /// Saves the result.
         /// </summary>
         /// <param name="result">The result.</param>
@@ -21,7 +27,7 @@ namespace MediaBrowser.Controller.Persistence
         /// <param name="id">The identifier.</param>
         /// <returns>Task.</returns>
         Task Delete(string id);
-        
+
         /// <summary>
         /// Gets the result.
         /// </summary>

@@ -18,5 +18,10 @@ namespace MediaBrowser.Server.Mono.Native
         {
             return SqliteExtensions.ConnectToDb(dbPath, isReadOnly, enablePooling, cacheSize, _logger);
         }
+
+        public Task<IDbConnection> Connect(string host, int port, string username, string password, string database)
+        {
+            return PgsqlExtensions.ConnectToDb(host, port, username, password, database, _logger);
+        }
     }
 }

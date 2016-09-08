@@ -13,12 +13,16 @@ using System.Threading.Tasks;
 
 namespace MediaBrowser.Server.Implementations.Notifications
 {
-    public class SqliteNotificationsRepository : BaseSqliteRepository, INotificationsRepository
+    public class PgsqlNotificationsRepository : BasePgsqlRepository, INotificationsRepository
     {
-        public SqliteNotificationsRepository(ILogManager logManager, IServerApplicationPaths appPaths, IDbConnector dbConnector)
+        public PgsqlNotificationsRepository(ILogManager logManager, IServerApplicationPaths appPaths, IDbConnector dbConnector)
             : base(logManager, dbConnector)
         {
-            DbFilePath = Path.Combine(appPaths.DataPath, "notifications.db");
+            host = "localhost";
+            port = 5432;
+            username = "emby";
+            password = "emby";
+            database = "emby";
         }
 
         public event EventHandler<NotificationUpdateEventArgs> NotificationAdded;
@@ -32,7 +36,7 @@ namespace MediaBrowser.Server.Implementations.Notifications
         /// <value>The name.</value>
         public string Name {
             get {
-                return "SQLite";
+                return "PostgreSQL";
             }
         }
 
@@ -42,9 +46,9 @@ namespace MediaBrowser.Server.Implementations.Notifications
                 {
                     string[] queries = {
 
-                        "create table if not exists Notifications (Id GUID NOT NULL, UserId GUID NOT NULL, Date DATETIME NOT NULL, Name TEXT NOT NULL, Description TEXT, Url TEXT, Level TEXT NOT NULL, IsRead BOOLEAN NOT NULL, Category TEXT NOT NULL, RelatedId TEXT, PRIMARY KEY (Id, UserId))",
-                        "create index if not exists idx_Notifications1 on Notifications(Id)",
-                        "create index if not exists idx_Notifications2 on Notifications(UserId)"
+                        "CREATE TABLE IF NOT EXISTS Notifications (Id UUID NOT NULL, UserId UUID NOT NULL, Date TIMESTAMP NOT NULL, Name TEXT NOT NULL, Description TEXT, Url TEXT, Level TEXT NOT NULL, IsRead BOOLEAN NOT NULL, Category TEXT NOT NULL, RelatedId TEXT, PRIMARY KEY (Id, UserId))",
+                        "CREATE INDEX IF NOT EXISTS idx_Notifications1 ON Notifications (Id)",
+                        "CREATE INDEX IF NOT EXISTS idx_Notifications2 ON Notifications (UserId)"
                     };
 
                     connection.RunQueries(queries, Logger);
@@ -60,7 +64,7 @@ namespace MediaBrowser.Server.Implementations.Notifications
         {
             var result = new NotificationResult();
 
-            using (var connection = CreateConnection(true).Result)
+            using (var connection = CreateConnection().Result)
                 {
                     using (var cmd = connection.CreateCommand())
                         {
@@ -68,16 +72,16 @@ namespace MediaBrowser.Server.Implementations.Notifications
 
                             if (query.IsRead.HasValue)
                                 {
-                                    clauses.Add("IsRead=@IsRead");
+                                    clauses.Add("IsRead = @IsRead");
                                     cmd.Parameters.Add(cmd, "@IsRead", DbType.Boolean).Value = query.IsRead.Value;
                                 }
 
-                            clauses.Add("UserId=@UserId");
+                            clauses.Add("UserId = @UserId");
                             cmd.Parameters.Add(cmd, "@UserId", DbType.Guid).Value = new Guid(query.UserId);
 
-                            var whereClause = " where " + string.Join(" And ", clauses.ToArray());
+                            var whereClause = "WHERE " + string.Join(" AND ", clauses.ToArray());
 
-                            cmd.CommandText = string.Format("select count(Id) from Notifications{0};select Id,UserId,Date,Name,Description,Url,Level,IsRead,Category,RelatedId from Notifications{0} order by IsRead asc, Date desc", whereClause);
+                            cmd.CommandText = string.Format("SELECT COUNT(Id) FROM Notifications {0}; SELECT Id, UserId, Date, Name, Description, Url, Level, IsRead, Category, RelatedId FROM Notifications {0} ORDER BY IsRead ASC, Date DESC", whereClause);
 
                             using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess))
                                 {
@@ -113,11 +117,11 @@ namespace MediaBrowser.Server.Implementations.Notifications
         {
             var result = new NotificationsSummary();
 
-            using (var connection = CreateConnection(true).Result)
+            using (var connection = CreateConnection().Result)
                 {
                     using (var cmd = connection.CreateCommand())
                         {
-                            cmd.CommandText = "select Level from Notifications where UserId=@UserId and IsRead=@IsRead";
+                            cmd.CommandText = "SELECT Level FROM Notifications WHERE UserId = @UserId AND IsRead = @IsRead";
 
                             cmd.Parameters.Add(cmd, "@UserId", DbType.Guid).Value = new Guid(userId);
                             cmd.Parameters.Add(cmd, "@IsRead", DbType.Boolean).Value = false;
@@ -250,7 +254,7 @@ namespace MediaBrowser.Server.Implementations.Notifications
                 {
                     using (var replaceNotificationCommand = connection.CreateCommand())
                         {
-                            replaceNotificationCommand.CommandText = "replace into Notifications (Id, UserId, Date, Name, Description, Url, Level, IsRead, Category, RelatedId) values (@Id, @UserId, @Date, @Name, @Description, @Url, @Level, @IsRead, @Category, @RelatedId)";
+                            replaceNotificationCommand.CommandText = "INSERT INTO Notifications (Id, UserId, Date, Name, Description, Url, Level, IsRead, Category, RelatedId) VALUES (@Id, @UserId, @Date, @Name, @Description, @Url, @Level, @IsRead, @Category, @RelatedId) ON CONFLICT (Id, UserId) DO UPDATE SET Date = @Date, Name = @Name, Description = @Description, Url = @Url, Level = @Level, IsRead = @IsRead, Category = @Category, RelatedId = @RelatedId";
 
                             replaceNotificationCommand.Parameters.Add(replaceNotificationCommand, "@Id");
                             replaceNotificationCommand.Parameters.Add(replaceNotificationCommand, "@UserId");
@@ -353,7 +357,7 @@ namespace MediaBrowser.Server.Implementations.Notifications
                 {
                     using (var markAllReadCommand = connection.CreateCommand())
                         {
-                            markAllReadCommand.CommandText = "update Notifications set IsRead=@IsRead where UserId=@UserId";
+                            markAllReadCommand.CommandText = "UPDATE Notifications SET IsRead = @IsRead WHERE UserId = @UserId";
 
                             markAllReadCommand.Parameters.Add(markAllReadCommand, "@UserId");
                             markAllReadCommand.Parameters.Add(markAllReadCommand, "@IsRead");
@@ -409,7 +413,7 @@ namespace MediaBrowser.Server.Implementations.Notifications
                 {
                     using (var markReadCommand = connection.CreateCommand())
                         {
-                            markReadCommand.CommandText = "update Notifications set IsRead=@IsRead where Id=@Id and UserId=@UserId";
+                            markReadCommand.CommandText = "UPDATE Notifications SET IsRead = @IsRead WHERE Id = @Id AND UserId = @UserId";
 
                             markReadCommand.Parameters.Add(markReadCommand, "@UserId");
                             markReadCommand.Parameters.Add(markReadCommand, "@IsRead");

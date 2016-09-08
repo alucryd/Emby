@@ -19,13 +19,19 @@ namespace MediaBrowser.Controller.Notifications
         /// Occurs when [notifications marked read].
         /// </summary>
         event EventHandler<NotificationReadEventArgs> NotificationsMarkedRead;
-        
+
         /// <summary>
         /// Gets the notifications.
         /// </summary>
         /// <param name="query">The query.</param>
         /// <returns>NotificationResult.</returns>
         NotificationResult GetNotifications(NotificationQuery query);
+
+        /// <summary>
+        /// Initializes the repository
+        /// </summary>
+        /// <returns>Task.</returns>
+        Task Initialize();
 
         /// <summary>
         /// Adds the notification.
@@ -53,7 +59,7 @@ namespace MediaBrowser.Controller.Notifications
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
         Task MarkAllRead(string userId, bool isRead, CancellationToken cancellationToken);
-        
+
         /// <summary>
         /// Gets the notifications summary.
         /// </summary>

@@ -115,8 +115,7 @@ namespace MediaBrowser.Server.Startup.Common
         /// Gets the server configuration manager.
         /// </summary>
         /// <value>The server configuration manager.</value>
-        public IServerConfigurationManager ServerConfigurationManager
-        {
+        public IServerConfigurationManager ServerConfigurationManager {
             get { return (IServerConfigurationManager)ConfigurationManager; }
         }
 
@@ -134,32 +133,39 @@ namespace MediaBrowser.Server.Startup.Common
         /// </summary>
         /// <value>The server manager.</value>
         private IServerManager ServerManager { get; set; }
+
         /// <summary>
         /// Gets or sets the user manager.
         /// </summary>
         /// <value>The user manager.</value>
         public IUserManager UserManager { get; set; }
+
         /// <summary>
         /// Gets or sets the library manager.
         /// </summary>
         /// <value>The library manager.</value>
         internal ILibraryManager LibraryManager { get; set; }
+
         /// <summary>
         /// Gets or sets the directory watchers.
         /// </summary>
         /// <value>The directory watchers.</value>
         private ILibraryMonitor LibraryMonitor { get; set; }
+
         /// <summary>
         /// Gets or sets the provider manager.
         /// </summary>
         /// <value>The provider manager.</value>
         private IProviderManager ProviderManager { get; set; }
+
         /// <summary>
         /// Gets or sets the HTTP server.
         /// </summary>
         /// <value>The HTTP server.</value>
         private IHttpServer HttpServer { get; set; }
+
         private IDtoService DtoService { get; set; }
+
         private IImageProcessor ImageProcessor { get; set; }
 
         /// <summary>
@@ -167,9 +173,11 @@ namespace MediaBrowser.Server.Startup.Common
         /// </summary>
         /// <value>The media encoder.</value>
         private IMediaEncoder MediaEncoder { get; set; }
+
         private ISubtitleEncoder SubtitleEncoder { get; set; }
 
         private IConnectManager ConnectManager { get; set; }
+
         private ISessionManager SessionManager { get; set; }
 
         private ILiveTvManager LiveTvManager { get; set; }
@@ -177,7 +185,9 @@ namespace MediaBrowser.Server.Startup.Common
         public ILocalizationManager LocalizationManager { get; set; }
 
         private IEncodingManager EncodingManager { get; set; }
+
         private IChannelManager ChannelManager { get; set; }
+
         private ISyncManager SyncManager { get; set; }
 
         /// <summary>
@@ -185,24 +195,37 @@ namespace MediaBrowser.Server.Startup.Common
         /// </summary>
         /// <value>The user data repository.</value>
         private IUserDataManager UserDataManager { get; set; }
+
         private IUserRepository UserRepository { get; set; }
+
         internal IDisplayPreferencesRepository DisplayPreferencesRepository { get; set; }
+
         internal IItemRepository ItemRepository { get; set; }
+
         private INotificationsRepository NotificationsRepository { get; set; }
+
         private IFileOrganizationRepository FileOrganizationRepository { get; set; }
 
         private INotificationManager NotificationManager { get; set; }
+
         private ISubtitleManager SubtitleManager { get; set; }
+
         private IChapterManager ChapterManager { get; set; }
+
         private IDeviceManager DeviceManager { get; set; }
 
         internal IUserViewManager UserViewManager { get; set; }
 
         private IAuthenticationRepository AuthenticationRepository { get; set; }
+
         private ISyncRepository SyncRepository { get; set; }
+
         private ITVSeriesManager TVSeriesManager { get; set; }
+
         private ICollectionManager CollectionManager { get; set; }
+
         private IMediaSourceManager MediaSourceManager { get; set; }
+
         private IPlaylistManager PlaylistManager { get; set; }
 
         private readonly StartupOptions _startupOptions;
@@ -220,11 +243,11 @@ namespace MediaBrowser.Server.Startup.Common
         /// <param name="releaseAssetFilename">The release asset filename.</param>
         /// <param name="nativeApp">The native application.</param>
         public ApplicationHost(ServerApplicationPaths applicationPaths,
-            ILogManager logManager,
-            StartupOptions options,
-            IFileSystem fileSystem,
-            string releaseAssetFilename,
-            INativeApp nativeApp)
+                               ILogManager logManager,
+                               StartupOptions options,
+                               IFileSystem fileSystem,
+                               string releaseAssetFilename,
+                               INativeApp nativeApp)
             : base(applicationPaths, logManager, fileSystem)
         {
             _startupOptions = options;
@@ -235,35 +258,30 @@ namespace MediaBrowser.Server.Startup.Common
         }
 
         private Version _version;
+
         /// <summary>
         /// Gets the current application version
         /// </summary>
         /// <value>The application version.</value>
-        public override Version ApplicationVersion
-        {
-            get
-            {
+        public override Version ApplicationVersion {
+            get {
                 return _version ?? (_version = NativeApp.GetType().Assembly.GetName().Version);
             }
         }
 
-        public override string OperatingSystemDisplayName
-        {
+        public override string OperatingSystemDisplayName {
             get { return NativeApp.Environment.OperatingSystemVersionString; }
         }
 
-        public override bool IsRunningAsService
-        {
+        public override bool IsRunningAsService {
             get { return NativeApp.IsRunningAsService; }
         }
 
-        public bool SupportsRunningAsService
-        {
+        public bool SupportsRunningAsService {
             get { return NativeApp.SupportsRunningAsService; }
         }
 
-        public bool SupportsLibraryMonitor
-        {
+        public bool SupportsLibraryMonitor {
             get { return NativeApp.SupportsLibraryMonitor; }
         }
 
@@ -271,10 +289,8 @@ namespace MediaBrowser.Server.Startup.Common
         /// Gets the name.
         /// </summary>
         /// <value>The name.</value>
-        public override string Name
-        {
-            get
-            {
+        public override string Name {
+            get {
                 return "Emby Server";
             }
         }
@@ -283,13 +299,11 @@ namespace MediaBrowser.Server.Startup.Common
         /// Gets a value indicating whether this instance can self restart.
         /// </summary>
         /// <value><c>true</c> if this instance can self restart; otherwise, <c>false</c>.</value>
-        public override bool CanSelfRestart
-        {
+        public override bool CanSelfRestart {
             get { return NativeApp.CanSelfRestart; }
         }
 
-        public bool SupportsAutoRunAtStartup
-        {
+        public bool SupportsAutoRunAtStartup {
             get { return NativeApp.SupportsAutoRunAtStartup; }
         }
 
@@ -317,44 +331,47 @@ namespace MediaBrowser.Server.Startup.Common
         {
             if (ServerConfigurationManager.Configuration.MigrationVersion < CleanDatabaseScheduledTask.MigrationVersion &&
                 ServerConfigurationManager.Configuration.IsStartupWizardCompleted)
-            {
-                TaskManager.SuspendTriggers = true;
-            }
+                {
+                    TaskManager.SuspendTriggers = true;
+                }
 
             await base.RunStartupTasks().ConfigureAwait(false);
 
             await MediaEncoder.Init().ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(MediaEncoder.EncoderPath))
-            {
-                if (ServerConfigurationManager.Configuration.IsStartupWizardCompleted)
                 {
-                    ServerConfigurationManager.Configuration.IsStartupWizardCompleted = false;
-                    ServerConfigurationManager.SaveConfiguration();
+                    if (ServerConfigurationManager.Configuration.IsStartupWizardCompleted)
+                        {
+                            ServerConfigurationManager.Configuration.IsStartupWizardCompleted = false;
+                            ServerConfigurationManager.SaveConfiguration();
+                        }
                 }
-            }
 
             Logger.Info("ServerId: {0}", SystemId);
             Logger.Info("Core startup complete");
             HttpServer.GlobalResponse = null;
 
-            PerformPostInitMigrations();
-            Logger.Info("Post-init migrations complete");
+            if (_startupOptions.GetOption("-db") != "postgresql")
+                {
+                    PerformPostInitMigrations();
+                    Logger.Info("Post-init migrations complete");
+                        
+                }
 
             foreach (var entryPoint in GetExports<IServerEntryPoint>().ToList())
-            {
-                var name = entryPoint.GetType().FullName;
-                Logger.Info("Starting entry point {0}", name);
-                try
                 {
-                    entryPoint.Run();
+                    var name = entryPoint.GetType().FullName;
+                    Logger.Info("Starting entry point {0}", name);
+                    try
+                        {
+                            entryPoint.Run();
+                        } catch (Exception ex)
+                        {
+                            Logger.ErrorException("Error in {0}", ex, name);
+                        }
+                    Logger.Info("Entry point completed: {0}", name);
                 }
-                catch (Exception ex)
-                {
-                    Logger.ErrorException("Error in {0}", ex, name);
-                }
-                Logger.Info("Entry point completed: {0}", name);
-            }
             Logger.Info("All entry points have started");
 
             LogManager.RemoveConsoleOutput();
@@ -372,43 +389,39 @@ namespace MediaBrowser.Server.Startup.Common
 
         private void PerformPreInitMigrations()
         {
-            var migrations = new List<IVersionMigration>
-            {
+            var migrations = new List<IVersionMigration> {
                 new UpdateLevelMigration(ServerConfigurationManager, this, HttpClient, JsonSerializer, _releaseAssetFilename)
             };
 
             foreach (var task in migrations)
-            {
-                try
                 {
-                    task.Run();
+                    try
+                        {
+                            task.Run();
+                        } catch (Exception ex)
+                        {
+                            Logger.ErrorException("Error running migration", ex);
+                        }
                 }
-                catch (Exception ex)
-                {
-                    Logger.ErrorException("Error running migration", ex);
-                }
-            }
         }
 
         private void PerformPostInitMigrations()
         {
-            var migrations = new List<IVersionMigration>
-            {
+            var migrations = new List<IVersionMigration> {
                 new MovieDbEpisodeProviderMigration(ServerConfigurationManager),
                 new DbMigration(ServerConfigurationManager, TaskManager)
             };
 
             foreach (var task in migrations)
-            {
-                try
                 {
-                    task.Run();
+                    try
+                        {
+                            task.Run();
+                        } catch (Exception ex)
+                        {
+                            Logger.ErrorException("Error running migration", ex);
+                        }
                 }
-                catch (Exception ex)
-                {
-                    Logger.ErrorException("Error running migration", ex);
-                }
-            }
         }
 
         /// <summary>
@@ -436,11 +449,25 @@ namespace MediaBrowser.Server.Startup.Common
             UserRepository = await GetUserRepository().ConfigureAwait(false);
             RegisterSingleInstance(UserRepository);
 
-            var displayPreferencesRepo = new SqliteDisplayPreferencesRepository(LogManager, JsonSerializer, ApplicationPaths, NativeApp.GetDbConnector());
+            IDisplayPreferencesRepository displayPreferencesRepo;
+            if (_startupOptions.GetOption("-db") == "postgresql")
+                {
+                    displayPreferencesRepo = new PgsqlDisplayPreferencesRepository(LogManager, JsonSerializer, ApplicationPaths, NativeApp.GetDbConnector());
+                } else
+                {
+                    displayPreferencesRepo = new SqliteDisplayPreferencesRepository(LogManager, JsonSerializer, ApplicationPaths, NativeApp.GetDbConnector());
+                }
             DisplayPreferencesRepository = displayPreferencesRepo;
             RegisterSingleInstance(DisplayPreferencesRepository);
 
-            var itemRepo = new SqliteItemRepository(ServerConfigurationManager, JsonSerializer, LogManager, NativeApp.GetDbConnector());
+            IItemRepository itemRepo;
+            if (_startupOptions.GetOption("-db") == "postgresql")
+                {
+                    itemRepo = new PgsqlItemRepository(ServerConfigurationManager, JsonSerializer, LogManager, NativeApp.GetDbConnector());
+                } else
+                {
+                    itemRepo = new SqliteItemRepository(ServerConfigurationManager, JsonSerializer, LogManager, NativeApp.GetDbConnector());
+                }
             ItemRepository = itemRepo;
             RegisterSingleInstance(ItemRepository);
 
@@ -582,7 +609,14 @@ namespace MediaBrowser.Server.Startup.Common
 
             await displayPreferencesRepo.Initialize().ConfigureAwait(false);
 
-            var userDataRepo = new SqliteUserDataRepository(LogManager, ApplicationPaths, NativeApp.GetDbConnector());
+            IUserDataRepository userDataRepo;
+            if (_startupOptions.GetOption("-db") == "postgresql")
+                {
+                    userDataRepo = new PgsqlUserDataRepository(LogManager, ApplicationPaths, NativeApp.GetDbConnector());
+                } else
+                {
+                    userDataRepo = new SqliteUserDataRepository(LogManager, ApplicationPaths, NativeApp.GetDbConnector());
+                }
 
             ((UserDataManager)UserDataManager).Repository = userDataRepo;
             await itemRepo.Initialize(userDataRepo).ConfigureAwait(false);
@@ -600,9 +634,9 @@ namespace MediaBrowser.Server.Startup.Common
             var maxConcurrentImageProcesses = Math.Max(Environment.ProcessorCount, 4);
 
             if (_startupOptions.ContainsOption("-imagethreads"))
-            {
-                int.TryParse(_startupOptions.GetOption("-imagethreads"), NumberStyles.Any, CultureInfo.InvariantCulture, out maxConcurrentImageProcesses);
-            }
+                {
+                    int.TryParse(_startupOptions.GetOption("-imagethreads"), NumberStyles.Any, CultureInfo.InvariantCulture, out maxConcurrentImageProcesses);
+                }
 
             return new ImageProcessor(LogManager.GetLogger("ImageProcessor"), ServerConfigurationManager.ApplicationPaths, FileSystemManager, JsonSerializer, GetImageEncoder(), maxConcurrentImageProcesses, () => LibraryManager);
         }
@@ -610,25 +644,23 @@ namespace MediaBrowser.Server.Startup.Common
         private IImageEncoder GetImageEncoder()
         {
             if (!_startupOptions.ContainsOption("-enablegdi"))
-            {
-                try
                 {
-                    return new ImageMagickEncoder(LogManager.GetLogger("ImageMagick"), ApplicationPaths, HttpClient, FileSystemManager, ServerConfigurationManager);
+                    try
+                        {
+                            return new ImageMagickEncoder(LogManager.GetLogger("ImageMagick"), ApplicationPaths, HttpClient, FileSystemManager, ServerConfigurationManager);
+                        } catch
+                        {
+                            Logger.Error("Error loading ImageMagick. Will revert to GDI.");
+                        }
                 }
-                catch
-                {
-                    Logger.Error("Error loading ImageMagick. Will revert to GDI.");
-                }
-            }
 
             try
-            {
-                return new GDIImageEncoder(FileSystemManager, LogManager.GetLogger("GDI"));
-            }
-            catch
-            {
-                Logger.Error("Error loading GDI. Will revert to NullImageEncoder.");
-            }
+                {
+                    return new GDIImageEncoder(FileSystemManager, LogManager.GetLogger("GDI"));
+                } catch
+                {
+                    Logger.Error("Error loading GDI. Will revert to NullImageEncoder.");
+                }
 
             return new NullImageEncoder();
         }
@@ -655,21 +687,21 @@ namespace MediaBrowser.Server.Startup.Common
             var hasExternalEncoder = string.Equals(info.Version, "external", StringComparison.OrdinalIgnoreCase);
 
             var mediaEncoder = new MediaEncoder(LogManager.GetLogger("MediaEncoder"),
-                JsonSerializer,
-                encoderPath,
-                probePath,
-                hasExternalEncoder,
-                ServerConfigurationManager,
-                FileSystemManager,
-                LiveTvManager,
-                IsoManager,
-                LibraryManager,
-                ChannelManager,
-                SessionManager,
-                () => SubtitleEncoder,
-                () => MediaSourceManager,
-                HttpClient,
-                ZipClient);
+                                   JsonSerializer,
+                                   encoderPath,
+                                   probePath,
+                                   hasExternalEncoder,
+                                   ServerConfigurationManager,
+                                   FileSystemManager,
+                                   LiveTvManager,
+                                   IsoManager,
+                                   LibraryManager,
+                                   ChannelManager,
+                                   SessionManager,
+                                   () => SubtitleEncoder,
+                                   () => MediaSourceManager,
+                                   HttpClient,
+                                   ZipClient);
 
             MediaEncoder = mediaEncoder;
             RegisterSingleInstance(MediaEncoder);
@@ -682,18 +714,24 @@ namespace MediaBrowser.Server.Startup.Common
         private async Task<IUserRepository> GetUserRepository()
         {
             try
-            {
-                var repo = new SqliteUserRepository(LogManager, ApplicationPaths, JsonSerializer, NativeApp.GetDbConnector());
+                {
+                    IUserRepository repo;
+                    if (_startupOptions.GetOption("-db") == "postgresql")
+                        {
+                            repo = new PgsqlUserRepository(LogManager, ApplicationPaths, JsonSerializer, NativeApp.GetDbConnector());
+                        } else
+                        {
+                            repo = new SqliteUserRepository(LogManager, ApplicationPaths, JsonSerializer, NativeApp.GetDbConnector());
+                        }
 
-                await repo.Initialize().ConfigureAwait(false);
+                    await repo.Initialize().ConfigureAwait(false);
 
-                return repo;
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorException("Error opening user db", ex);
-                throw;
-            }
+                    return repo;
+                } catch (Exception ex)
+                {
+                    Logger.ErrorException("Error opening user db", ex);
+                    throw;
+                }
         }
 
         /// <summary>
@@ -702,7 +740,14 @@ namespace MediaBrowser.Server.Startup.Common
         /// <returns>Task{IUserRepository}.</returns>
         private async Task<IFileOrganizationRepository> GetFileOrganizationRepository()
         {
-            var repo = new SqliteFileOrganizationRepository(LogManager, ServerConfigurationManager.ApplicationPaths, NativeApp.GetDbConnector());
+            IFileOrganizationRepository repo;
+            if (_startupOptions.GetOption("-db") == "postgresql")
+                {
+                    repo = new PgsqlFileOrganizationRepository(LogManager, ServerConfigurationManager.ApplicationPaths, NativeApp.GetDbConnector());
+                } else
+                {
+                    repo = new SqliteFileOrganizationRepository(LogManager, ServerConfigurationManager.ApplicationPaths, NativeApp.GetDbConnector());
+                }
 
             await repo.Initialize().ConfigureAwait(false);
 
@@ -741,7 +786,14 @@ namespace MediaBrowser.Server.Startup.Common
         /// </summary>
         private async Task ConfigureNotificationsRepository()
         {
-            var repo = new SqliteNotificationsRepository(LogManager, ApplicationPaths, NativeApp.GetDbConnector());
+            INotificationsRepository repo;
+            if (_startupOptions.GetOption("-db") == "postgresql")
+                {
+                    repo = new PgsqlNotificationsRepository(LogManager, ApplicationPaths, NativeApp.GetDbConnector());
+                } else
+                {
+                    repo = new SqliteNotificationsRepository(LogManager, ApplicationPaths, NativeApp.GetDbConnector());
+                }
 
             await repo.Initialize().ConfigureAwait(false);
 
@@ -786,22 +838,21 @@ namespace MediaBrowser.Server.Startup.Common
         {
             var isAuthorized = ServerConfigurationManager.Configuration.IsPortAuthorized;
             if (isAuthorized)
-            {
-                try
                 {
-                    isAuthorized = !NativeApp.PortsRequireAuthorization(ConfigurationManager.CommonApplicationPaths.ApplicationPath);
-                }
-                catch
-                {
+                    try
+                        {
+                            isAuthorized = !NativeApp.PortsRequireAuthorization(ConfigurationManager.CommonApplicationPaths.ApplicationPath);
+                        } catch
+                        {
                     
+                        }
                 }
-            }
             if (!isAuthorized)
-            {
-                RegisterServerWithAdministratorAccess();
-                ServerConfigurationManager.Configuration.IsPortAuthorized = true;
-                ConfigurationManager.SaveConfiguration();
-            }
+                {
+                    RegisterServerWithAdministratorAccess();
+                    ServerConfigurationManager.Configuration.IsPortAuthorized = true;
+                    ConfigurationManager.SaveConfiguration();
+                }
 
             base.FindParts();
 
@@ -812,18 +863,18 @@ namespace MediaBrowser.Server.Startup.Common
             StartServer();
 
             LibraryManager.AddParts(GetExports<IResolverIgnoreRule>(),
-                                    GetExports<IVirtualFolderCreator>(),
-                                    GetExports<IItemResolver>(),
-                                    GetExports<IIntroProvider>(),
-                                    GetExports<IBaseItemComparer>(),
-                                    GetExports<ILibraryPostScanTask>());
+                GetExports<IVirtualFolderCreator>(),
+                GetExports<IItemResolver>(),
+                GetExports<IIntroProvider>(),
+                GetExports<IBaseItemComparer>(),
+                GetExports<ILibraryPostScanTask>());
 
             ProviderManager.AddParts(GetExports<IImageProvider>(),
-                                     GetExports<IMetadataService>(),
-                                     GetExports<IMetadataProvider>(),
-                                     GetExports<IMetadataSaver>(),
-                                     GetExports<IImageSaver>(),
-                                     GetExports<IExternalId>());
+                GetExports<IMetadataService>(),
+                GetExports<IMetadataProvider>(),
+                GetExports<IMetadataSaver>(),
+                GetExports<IImageSaver>(),
+                GetExports<IExternalId>());
 
             ImageProcessor.AddParts(GetExports<IImageEnhancer>());
 
@@ -850,17 +901,15 @@ namespace MediaBrowser.Server.Startup.Common
 
             hosts.Add("+");
 
-            return hosts.SelectMany(i =>
-            {
-                var prefixes = new List<string>
-                {
-                    "http://"+i+":" + ServerConfigurationManager.Configuration.HttpServerPortNumber + "/"
+            return hosts.SelectMany(i => {
+                var prefixes = new List<string> {
+                    "http://" + i + ":" + ServerConfigurationManager.Configuration.HttpServerPortNumber + "/"
                 };
 
                 if (!string.IsNullOrWhiteSpace(CertificatePath))
-                {
-                    prefixes.Add("https://" + i + ":" + ServerConfigurationManager.Configuration.HttpsPortNumber + "/");
-                }
+                    {
+                        prefixes.Add("https://" + i + ":" + ServerConfigurationManager.Configuration.HttpsPortNumber + "/");
+                    }
 
                 return prefixes;
             });
@@ -874,46 +923,44 @@ namespace MediaBrowser.Server.Startup.Common
             CertificatePath = GetCertificatePath(true);
 
             try
-            {
-                ServerManager.Start(GetUrlPrefixes(), CertificatePath);
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorException("Error starting http server", ex);
+                {
+                    ServerManager.Start(GetUrlPrefixes(), CertificatePath);
+                } catch (Exception ex)
+                {
+                    Logger.ErrorException("Error starting http server", ex);
 
-                throw;
-            }
+                    throw;
+                }
         }
 
         private string GetCertificatePath(bool generateCertificate)
         {
             if (!string.IsNullOrWhiteSpace(ServerConfigurationManager.Configuration.CertificatePath))
-            {
-                // Custom cert
-                return ServerConfigurationManager.Configuration.CertificatePath;
-            }
+                {
+                    // Custom cert
+                    return ServerConfigurationManager.Configuration.CertificatePath;
+                }
 
             // Generate self-signed cert
             var certHost = GetHostnameFromExternalDns(ServerConfigurationManager.Configuration.WanDdns);
             var certPath = Path.Combine(ServerConfigurationManager.ApplicationPaths.ProgramDataPath, "ssl", "cert_" + certHost.GetMD5().ToString("N") + ".pfx");
 
             if (generateCertificate)
-            {
-                if (!FileSystemManager.FileExists(certPath))
                 {
-                    FileSystemManager.CreateDirectory(Path.GetDirectoryName(certPath));
+                    if (!FileSystemManager.FileExists(certPath))
+                        {
+                            FileSystemManager.CreateDirectory(Path.GetDirectoryName(certPath));
 
-                    try
-                    {
-                        NetworkManager.GenerateSelfSignedSslCertificate(certPath, certHost);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.ErrorException("Error creating ssl cert", ex);
-                        return null;
-                    }
+                            try
+                                {
+                                    NetworkManager.GenerateSelfSignedSslCertificate(certPath, certHost);
+                                } catch (Exception ex)
+                                {
+                                    Logger.ErrorException("Error creating ssl cert", ex);
+                                    return null;
+                                }
+                        }
                 }
-            }
 
             return certPath;
         }
@@ -931,35 +978,35 @@ namespace MediaBrowser.Server.Startup.Common
 
             // Don't do anything if these haven't been set yet
             if (HttpPort != 0 && HttpsPort != 0)
-            {
-                // Need to restart if ports have changed
-                if (ServerConfigurationManager.Configuration.HttpServerPortNumber != HttpPort ||
-                    ServerConfigurationManager.Configuration.HttpsPortNumber != HttpsPort)
                 {
-                    if (ServerConfigurationManager.Configuration.IsPortAuthorized)
-                    {
-                        ServerConfigurationManager.Configuration.IsPortAuthorized = false;
-                        ServerConfigurationManager.SaveConfiguration();
+                    // Need to restart if ports have changed
+                    if (ServerConfigurationManager.Configuration.HttpServerPortNumber != HttpPort ||
+                        ServerConfigurationManager.Configuration.HttpsPortNumber != HttpsPort)
+                        {
+                            if (ServerConfigurationManager.Configuration.IsPortAuthorized)
+                                {
+                                    ServerConfigurationManager.Configuration.IsPortAuthorized = false;
+                                    ServerConfigurationManager.SaveConfiguration();
 
-                        requiresRestart = true;
-                    }
+                                    requiresRestart = true;
+                                }
+                        }
                 }
-            }
 
             if (!HttpServer.UrlPrefixes.SequenceEqual(GetUrlPrefixes(), StringComparer.OrdinalIgnoreCase))
-            {
-                requiresRestart = true;
-            }
+                {
+                    requiresRestart = true;
+                }
 
             if (!string.Equals(CertificatePath, GetCertificatePath(false), StringComparison.OrdinalIgnoreCase))
-            {
-                requiresRestart = true;
-            }
+                {
+                    requiresRestart = true;
+                }
 
             if (requiresRestart)
-            {
-                NotifyPendingRestart();
-            }
+                {
+                    NotifyPendingRestart();
+                }
         }
 
         /// <summary>
@@ -968,18 +1015,17 @@ namespace MediaBrowser.Server.Startup.Common
         public override async Task Restart()
         {
             if (!CanSelfRestart)
-            {
-                throw new PlatformNotSupportedException("The server is unable to self-restart. Please restart manually.");
-            }
+                {
+                    throw new PlatformNotSupportedException("The server is unable to self-restart. Please restart manually.");
+                }
 
             try
-            {
-                await SessionManager.SendServerRestartNotification(CancellationToken.None).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorException("Error sending server restart notification", ex);
-            }
+                {
+                    await SessionManager.SendServerRestartNotification(CancellationToken.None).ConfigureAwait(false);
+                } catch (Exception ex)
+                {
+                    Logger.ErrorException("Error sending server restart notification", ex);
+                }
 
             Logger.Info("Calling NativeApp.Restart");
 
@@ -990,10 +1036,8 @@ namespace MediaBrowser.Server.Startup.Common
         /// Gets or sets a value indicating whether this instance can self update.
         /// </summary>
         /// <value><c>true</c> if this instance can self update; otherwise, <c>false</c>.</value>
-        public override bool CanSelfUpdate
-        {
-            get
-            {
+        public override bool CanSelfUpdate {
+            get {
 #if DEBUG
                 return false;
 #endif
@@ -1066,16 +1110,15 @@ namespace MediaBrowser.Server.Startup.Common
         private IEnumerable<Assembly> GetPluginAssemblies()
         {
             try
-            {
-                return Directory.EnumerateFiles(ApplicationPaths.PluginsPath, "*.dll", SearchOption.TopDirectoryOnly)
+                {
+                    return Directory.EnumerateFiles(ApplicationPaths.PluginsPath, "*.dll", SearchOption.TopDirectoryOnly)
                     .Select(LoadAssembly)
                     .Where(a => a != null)
                     .ToList();
-            }
-            catch (DirectoryNotFoundException)
-            {
-                return new List<Assembly>();
-            }
+                } catch (DirectoryNotFoundException)
+                {
+                    return new List<Assembly>();
+                }
         }
 
         /// <summary>
@@ -1086,8 +1129,7 @@ namespace MediaBrowser.Server.Startup.Common
         {
             var localAddress = await GetLocalApiUrl().ConfigureAwait(false);
 
-            return new SystemInfo
-            {
+            return new SystemInfo {
                 HasPendingRestart = HasPendingRestart,
                 Version = ApplicationVersion.ToString(),
                 IsNetworkDeployed = CanSelfUpdate,
@@ -1124,37 +1166,33 @@ namespace MediaBrowser.Server.Startup.Common
             };
         }
 
-        public bool EnableHttps
-        {
-            get
-            {
+        public bool EnableHttps {
+            get {
                 return SupportsHttps && ServerConfigurationManager.Configuration.EnableHttps;
             }
         }
 
-        public bool SupportsHttps
-        {
+        public bool SupportsHttps {
             get { return !string.IsNullOrWhiteSpace(HttpServer.CertificatePath); }
         }
 
         public async Task<string> GetLocalApiUrl()
         {
             try
-            {
-                // Return the first matched address, if found, or the first known local address
-                var address = (await GetLocalIpAddresses().ConfigureAwait(false)).FirstOrDefault(i => !IPAddress.IsLoopback(i));
-
-                if (address != null)
                 {
-                    return GetLocalApiUrl(address);
-                }
+                    // Return the first matched address, if found, or the first known local address
+                    var address = (await GetLocalIpAddresses().ConfigureAwait(false)).FirstOrDefault(i => !IPAddress.IsLoopback(i));
 
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorException("Error getting local Ip address information", ex);
-            }
+                    if (address != null)
+                        {
+                            return GetLocalApiUrl(address);
+                        }
+
+                    return null;
+                } catch (Exception ex)
+                {
+                    Logger.ErrorException("Error getting local Ip address information", ex);
+                }
 
             return null;
         }
@@ -1162,9 +1200,9 @@ namespace MediaBrowser.Server.Startup.Common
         public string GetLocalApiUrl(IPAddress ipAddress)
         {
             if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6)
-            {
-                return GetLocalApiUrl("[" + ipAddress + "]");
-            }
+                {
+                    return GetLocalApiUrl("[" + ipAddress + "]");
+                }
 
             return GetLocalApiUrl(ipAddress.ToString());
         }
@@ -1187,68 +1225,66 @@ namespace MediaBrowser.Server.Startup.Common
 
         private readonly ConcurrentDictionary<string, bool> _validAddressResults = new ConcurrentDictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         private DateTime _lastAddressCacheClear;
+
         private bool IsIpAddressValid(IPAddress address)
         {
             return IsIpAddressValidInternal(address).Result;
         }
+
         private async Task<bool> IsIpAddressValidInternal(IPAddress address)
         {
             if (IPAddress.IsLoopback(address))
-            {
-                return true;
-            }
+                {
+                    return true;
+                }
 
             var apiUrl = GetLocalApiUrl(address);
             apiUrl += "/system/ping";
 
             if ((DateTime.UtcNow - _lastAddressCacheClear).TotalMinutes >= 5)
-            {
-                _lastAddressCacheClear = DateTime.UtcNow;
-                _validAddressResults.Clear();
-            }
+                {
+                    _lastAddressCacheClear = DateTime.UtcNow;
+                    _validAddressResults.Clear();
+                }
 
             bool cachedResult;
             if (_validAddressResults.TryGetValue(apiUrl, out cachedResult))
-            {
-                return cachedResult;
-            }
+                {
+                    return cachedResult;
+                }
 
             try
-            {
-                using (var response = await HttpClient.SendAsync(new HttpRequestOptions
                 {
-                    Url = apiUrl,
-                    LogErrorResponseBody = false,
-                    LogErrors = false,
-                    LogRequest = false,
-                    TimeoutMs = 30000
+                    using (var response = await HttpClient.SendAsync(new HttpRequestOptions {
+                        Url = apiUrl,
+                        LogErrorResponseBody = false,
+                        LogErrors = false,
+                        LogRequest = false,
+                        TimeoutMs = 30000
 
-                }, "POST").ConfigureAwait(false))
+                    }, "POST").ConfigureAwait(false))
+                        {
+                            using (var reader = new StreamReader(response.Content))
+                                {
+                                    var result = reader.ReadToEnd();
+                                    var valid = string.Equals(Name, result, StringComparison.OrdinalIgnoreCase);
+
+                                    _validAddressResults.AddOrUpdate(apiUrl, valid, (k, v) => valid);
+                                    //Logger.Debug("Ping test result to {0}. Success: {1}", apiUrl, valid);
+                                    return valid;
+                                }
+                        }
+                } catch
                 {
-                    using (var reader = new StreamReader(response.Content))
-                    {
-                        var result = reader.ReadToEnd();
-                        var valid = string.Equals(Name, result, StringComparison.OrdinalIgnoreCase);
+                    //Logger.Debug("Ping test result to {0}. Success: {1}", apiUrl, false);
 
-                        _validAddressResults.AddOrUpdate(apiUrl, valid, (k, v) => valid);
-                        //Logger.Debug("Ping test result to {0}. Success: {1}", apiUrl, valid);
-                        return valid;
-                    }
+                    _validAddressResults.AddOrUpdate(apiUrl, false, (k, v) => false);
+                    return false;
                 }
-            }
-            catch
-            {
-                //Logger.Debug("Ping test result to {0}. Success: {1}", apiUrl, false);
-
-                _validAddressResults.AddOrUpdate(apiUrl, false, (k, v) => false);
-                return false;
-            }
         }
 
-        public string FriendlyName
-        {
-            get
-            {
+        public string FriendlyName {
+            get {
                 return string.IsNullOrWhiteSpace(ServerConfigurationManager.Configuration.ServerName)
                     ? Environment.MachineName
                     : ServerConfigurationManager.Configuration.ServerName;
@@ -1266,14 +1302,13 @@ namespace MediaBrowser.Server.Startup.Common
         private string GetMacAddress()
         {
             try
-            {
-                return NetworkManager.GetMacAddress();
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorException("Error getting mac address", ex);
-                return null;
-            }
+                {
+                    return NetworkManager.GetMacAddress();
+                } catch (Exception ex)
+                {
+                    Logger.ErrorException("Error getting mac address", ex);
+                    return null;
+                }
         }
 
         /// <summary>
@@ -1282,13 +1317,12 @@ namespace MediaBrowser.Server.Startup.Common
         public override async Task Shutdown()
         {
             try
-            {
-                await SessionManager.SendServerShutdownNotification(CancellationToken.None).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorException("Error sending server shutdown notification", ex);
-            }
+                {
+                    await SessionManager.SendServerShutdownNotification(CancellationToken.None).ConfigureAwait(false);
+                } catch (Exception ex)
+                {
+                    Logger.ErrorException("Error sending server shutdown notification", ex);
+                }
 
             NativeApp.Shutdown();
         }
@@ -1301,36 +1335,34 @@ namespace MediaBrowser.Server.Startup.Common
             Logger.Info("Requesting administrative access to authorize http server");
 
             try
-            {
-                NativeApp.AuthorizeServer(
-                    UdpServerEntryPoint.PortNumber,
-                    ServerConfigurationManager.Configuration.HttpServerPortNumber,
-                    ServerConfigurationManager.Configuration.HttpsPortNumber,
-                    ConfigurationManager.CommonApplicationPaths.ApplicationPath,
-                    ConfigurationManager.CommonApplicationPaths.TempDirectory);
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorException("Error authorizing server", ex);
-            }
+                {
+                    NativeApp.AuthorizeServer(
+                        UdpServerEntryPoint.PortNumber,
+                        ServerConfigurationManager.Configuration.HttpServerPortNumber,
+                        ServerConfigurationManager.Configuration.HttpsPortNumber,
+                        ConfigurationManager.CommonApplicationPaths.ApplicationPath,
+                        ConfigurationManager.CommonApplicationPaths.TempDirectory);
+                } catch (Exception ex)
+                {
+                    Logger.ErrorException("Error authorizing server", ex);
+                }
         }
 
         public event EventHandler HasUpdateAvailableChanged;
 
         private bool _hasUpdateAvailable;
-        public bool HasUpdateAvailable
-        {
+
+        public bool HasUpdateAvailable {
             get { return _hasUpdateAvailable; }
-            set
-            {
+            set {
                 var fireEvent = value && !_hasUpdateAvailable;
 
                 _hasUpdateAvailable = value;
 
                 if (fireEvent)
-                {
-                    EventHelper.FireEventIfNotNull(HasUpdateAvailableChanged, this, EventArgs.Empty, Logger);
-                }
+                    {
+                        EventHelper.FireEventIfNotNull(HasUpdateAvailableChanged, this, EventArgs.Empty, Logger);
+                    }
             }
         }
 
@@ -1346,16 +1378,15 @@ namespace MediaBrowser.Server.Startup.Common
             var updateLevel = ConfigurationManager.CommonConfiguration.SystemUpdateLevel;
 
             if (updateLevel == PackageVersionClass.Beta)
-            {
-                cacheLength = TimeSpan.FromHours(1);
-            }
-            else if (updateLevel == PackageVersionClass.Dev)
-            {
-                cacheLength = TimeSpan.FromMinutes(5);
-            }
+                {
+                    cacheLength = TimeSpan.FromHours(1);
+                } else if (updateLevel == PackageVersionClass.Dev)
+                {
+                    cacheLength = TimeSpan.FromMinutes(5);
+                }
 
             var result = await new GithubUpdater(HttpClient, JsonSerializer).CheckForUpdateResult("MediaBrowser", "Emby", ApplicationVersion, updateLevel, _releaseAssetFilename,
-                    "MBServer", "Mbserver.zip", cacheLength, cancellationToken).ConfigureAwait(false);
+                             "MBServer", "Mbserver.zip", cacheLength, cancellationToken).ConfigureAwait(false);
 
             HasUpdateAvailable = result.IsUpdateAvailable;
 
@@ -1384,9 +1415,9 @@ namespace MediaBrowser.Server.Startup.Common
         protected override void ConfigureAutoRunAtStartup(bool autorun)
         {
             if (SupportsAutoRunAtStartup)
-            {
-                NativeApp.ConfigureAutoRun(autorun);
-            }
+                {
+                    NativeApp.ConfigureAutoRun(autorun);
+                }
         }
 
         /// <summary>
@@ -1398,18 +1429,17 @@ namespace MediaBrowser.Server.Startup.Common
         private static string GetHostnameFromExternalDns(string externalDns)
         {
             if (string.IsNullOrWhiteSpace(externalDns))
-            {
-                return "localhost";
-            }
+                {
+                    return "localhost";
+                }
 
             try
-            {
-                return new Uri(externalDns).Host;
-            }
-            catch
-            {
-                return externalDns;
-            }
+                {
+                    return new Uri(externalDns).Host;
+                } catch
+                {
+                    return externalDns;
+                }
         }
 
         public void LaunchUrl(string url)

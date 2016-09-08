@@ -58,21 +58,20 @@ namespace MediaBrowser.Server.Implementations.Persistence
         public static Stream GetMemoryStream(this IDataReader reader, int ordinal)
         {
             if (reader == null)
-            {
-                throw new ArgumentNullException("reader");
-            }
+                {
+                    throw new ArgumentNullException("reader");
+                }
 
             var memoryStream = new MemoryStream();
             var num = 0L;
             var array = new byte[4096];
             long bytes;
             do
-            {
-                bytes = reader.GetBytes(ordinal, num, array, 0, array.Length);
-                memoryStream.Write(array, 0, (int)bytes);
-                num += bytes;
-            }
-            while (bytes > 0L);
+                {
+                    bytes = reader.GetBytes(ordinal, num, array, 0, array.Length);
+                    memoryStream.Write(array, 0, (int)bytes);
+                    num += bytes;
+                } while (bytes > 0L);
             memoryStream.Position = 0;
             return memoryStream;
         }
@@ -88,45 +87,44 @@ namespace MediaBrowser.Server.Implementations.Persistence
         public static void RunQueries(this IDbConnection connection, string[] queries, ILogger logger)
         {
             if (queries == null)
-            {
-                throw new ArgumentNullException("queries");
-            }
+                {
+                    throw new ArgumentNullException("queries");
+                }
 
             using (var tran = connection.BeginTransaction())
-            {
-                try
                 {
-                    using (var cmd = connection.CreateCommand())
-                    {
-                        foreach (var query in queries)
+                    try
                         {
-                            cmd.Transaction = tran;
-                            cmd.CommandText = query;
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
+                            using (var cmd = connection.CreateCommand())
+                                {
+                                    foreach (var query in queries)
+                                        {
+                                            cmd.Transaction = tran;
+                                            cmd.CommandText = query;
+                                            cmd.ExecuteNonQuery();
+                                        }
+                                }
 
-                    tran.Commit();
+                            tran.Commit();
+                        } catch (Exception e)
+                        {
+                            logger.ErrorException("Error running queries", e);
+                            tran.Rollback();
+                            throw;
+                        }
                 }
-                catch (Exception e)
-                {
-                    logger.ErrorException("Error running queries", e);
-                    tran.Rollback();
-                    throw;
-                }
-            }
         }
 
         public static void Attach(IDbConnection db, string path, string alias)
         {
             using (var cmd = db.CreateCommand())
-            {
-                cmd.CommandText = string.Format("attach @dbPath as {0};", alias);
-                cmd.Parameters.Add(cmd, "@dbPath", DbType.String);
-                cmd.GetParameter(0).Value = path;
+                {
+                    cmd.CommandText = string.Format("attach @dbPath as {0};", alias);
+                    cmd.Parameters.Add(cmd, "@dbPath", DbType.String);
+                    cmd.GetParameter(0).Value = path;
 
-                cmd.ExecuteNonQuery();
-            }
+                    cmd.ExecuteNonQuery();
+                }
         }
 
         /// <summary>
@@ -139,39 +137,39 @@ namespace MediaBrowser.Server.Implementations.Persistence
         public static byte[] SerializeToBytes(this IJsonSerializer json, object obj)
         {
             if (obj == null)
-            {
-                throw new ArgumentNullException("obj");
-            }
+                {
+                    throw new ArgumentNullException("obj");
+                }
 
             using (var stream = new MemoryStream())
-            {
-                json.SerializeToStream(obj, stream);
-                return stream.ToArray();
-            }
+                {
+                    json.SerializeToStream(obj, stream);
+                    return stream.ToArray();
+                }
         }
 
         public static void AddColumn(this IDbConnection connection, ILogger logger, string table, string columnName, string type)
         {
             using (var cmd = connection.CreateCommand())
-            {
-                cmd.CommandText = "PRAGMA table_info(" + table + ")";
-
-                using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult))
                 {
-                    while (reader.Read())
-                    {
-                        if (!reader.IsDBNull(1))
-                        {
-                            var name = reader.GetString(1);
+                    cmd.CommandText = "PRAGMA table_info(" + table + ")";
 
-                            if (string.Equals(name, columnName, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return;
-                            }
+                    using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult))
+                        {
+                            while (reader.Read())
+                                {
+                                    if (!reader.IsDBNull(1))
+                                        {
+                                            var name = reader.GetString(1);
+
+                                            if (string.Equals(name, columnName, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    return;
+                                                }
+                                        }
+                                }
                         }
-                    }
                 }
-            }
 
             var builder = new StringBuilder();
 

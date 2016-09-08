@@ -12,6 +12,12 @@ namespace MediaBrowser.Controller.Persistence
     public interface IDisplayPreferencesRepository : IRepository
     {
         /// <summary>
+        /// Initializes the repository
+        /// </summary>
+        /// <returns>Task.</returns>
+        Task Initialize();
+
+        /// <summary>
         /// Saves display preferences for an item
         /// </summary>
         /// <param name="displayPreferences">The display preferences.</param>
@@ -21,7 +27,7 @@ namespace MediaBrowser.Controller.Persistence
         /// <returns>Task.</returns>
         Task SaveDisplayPreferences(DisplayPreferences displayPreferences, string userId, string client,
                                     CancellationToken cancellationToken);
-        
+
         /// <summary>
         /// Saves all display preferences for a user
         /// </summary>
@@ -30,7 +36,8 @@ namespace MediaBrowser.Controller.Persistence
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
         Task SaveAllDisplayPreferences(IEnumerable<DisplayPreferences> displayPreferences, Guid userId,
-                                    CancellationToken cancellationToken);
+                                       CancellationToken cancellationToken);
+
         /// <summary>
         /// Gets the display preferences.
         /// </summary>

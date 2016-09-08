@@ -15,6 +15,12 @@ namespace MediaBrowser.Controller.Persistence
     public interface IItemRepository : IRepository
     {
         /// <summary>
+        /// Initializes the repository
+        /// </summary>
+        /// <returns>Task.</returns>
+        Task Initialize(IUserDataRepository userDataRepo);
+
+        /// <summary>
         /// Saves an item
         /// </summary>
         /// <param name="item">The item.</param>
@@ -106,6 +112,7 @@ namespace MediaBrowser.Controller.Persistence
         /// <param name="query">The query.</param>
         /// <returns>IEnumerable&lt;Guid&gt;.</returns>
         QueryResult<Guid> GetItemIds(InternalItemsQuery query);
+
         /// <summary>
         /// Gets the items.
         /// </summary>
@@ -164,17 +171,27 @@ namespace MediaBrowser.Controller.Persistence
         Task UpdateInheritedValues(CancellationToken cancellationToken);
 
         QueryResult<Tuple<BaseItem, ItemCounts>> GetGenres(InternalItemsQuery query);
+
         QueryResult<Tuple<BaseItem, ItemCounts>> GetMusicGenres(InternalItemsQuery query);
+
         QueryResult<Tuple<BaseItem, ItemCounts>> GetGameGenres(InternalItemsQuery query);
+
         QueryResult<Tuple<BaseItem, ItemCounts>> GetStudios(InternalItemsQuery query);
+
         QueryResult<Tuple<BaseItem, ItemCounts>> GetArtists(InternalItemsQuery query);
+
         QueryResult<Tuple<BaseItem, ItemCounts>> GetAlbumArtists(InternalItemsQuery query);
+
         QueryResult<Tuple<BaseItem, ItemCounts>> GetAllArtists(InternalItemsQuery query);
 
         List<string> GetGameGenreNames();
+
         List<string> GetMusicGenreNames();
+
         List<string> GetStudioNames();
+
         List<string> GetGenreNames();
+
         List<string> GetAllArtistNames();
     }
 }

@@ -40,10 +40,8 @@ namespace MediaBrowser.Server.Implementations.Persistence
         /// Gets the name of the repository
         /// </summary>
         /// <value>The name.</value>
-        public string Name
-        {
-            get
-            {
+        public string Name {
+            get {
                 return "SQLite";
             }
         }
@@ -103,13 +101,13 @@ namespace MediaBrowser.Server.Implementations.Persistence
             : base(logManager, connector)
         {
             if (config == null)
-            {
-                throw new ArgumentNullException("config");
-            }
+                {
+                    throw new ArgumentNullException("config");
+                }
             if (jsonSerializer == null)
-            {
-                throw new ArgumentNullException("jsonSerializer");
-            }
+                {
+                    throw new ArgumentNullException("jsonSerializer");
+                }
 
             _config = config;
             _jsonSerializer = jsonSerializer;
@@ -124,14 +122,13 @@ namespace MediaBrowser.Server.Implementations.Persistence
         {
             var cacheSize = _config.Configuration.SqliteCacheSize;
             if (cacheSize <= 0)
-            {
-                cacheSize = Math.Min(Environment.ProcessorCount * 50000, 200000);
-            }
+                {
+                    cacheSize = Math.Min(Environment.ProcessorCount * 50000, 200000);
+                }
 
             var connection = await DbConnector.Connect(DbFilePath, false, false, 0 - cacheSize).ConfigureAwait(false);
 
-            connection.RunQueries(new[]
-            {
+            connection.RunQueries(new[] {
                 "pragma temp_store = memory",
                 "pragma default_temp_store = memory",
                 "PRAGMA locking_mode=EXCLUSIVE"
@@ -145,7 +142,7 @@ namespace MediaBrowser.Server.Implementations.Persistence
         /// Opens the connection to the database
         /// </summary>
         /// <returns>Task.</returns>
-        public async Task Initialize(SqliteUserDataRepository userDataRepo)
+        public async Task Initialize(IUserDataRepository userDataRepo)
         {
             _connection = await CreateConnection(false).ConfigureAwait(false);
 
@@ -154,36 +151,36 @@ namespace MediaBrowser.Server.Implementations.Persistence
 
             string[] queries = {
 
-                                "create table if not exists TypedBaseItems (guid GUID primary key, type TEXT, data BLOB, ParentId GUID, Path TEXT)",
+                "create table if not exists TypedBaseItems (guid GUID primary key, type TEXT, data BLOB, ParentId GUID, Path TEXT)",
 
-                                "create table if not exists AncestorIds (ItemId GUID, AncestorId GUID, AncestorIdText TEXT, PRIMARY KEY (ItemId, AncestorId))",
-                                "create index if not exists idx_AncestorIds1 on AncestorIds(AncestorId)",
-                                "create index if not exists idx_AncestorIds2 on AncestorIds(AncestorIdText)",
+                "create table if not exists AncestorIds (ItemId GUID, AncestorId GUID, AncestorIdText TEXT, PRIMARY KEY (ItemId, AncestorId))",
+                "create index if not exists idx_AncestorIds1 on AncestorIds(AncestorId)",
+                "create index if not exists idx_AncestorIds2 on AncestorIds(AncestorIdText)",
 
-                                "create table if not exists UserDataKeys (ItemId GUID, UserDataKey TEXT Priority INT, PRIMARY KEY (ItemId, UserDataKey))",
+                "create table if not exists UserDataKeys (ItemId GUID, UserDataKey TEXT Priority INT, PRIMARY KEY (ItemId, UserDataKey))",
 
-                                "create table if not exists ItemValues (ItemId GUID, Type INT, Value TEXT, CleanValue TEXT)",
+                "create table if not exists ItemValues (ItemId GUID, Type INT, Value TEXT, CleanValue TEXT)",
 
-                                "create table if not exists ProviderIds (ItemId GUID, Name TEXT, Value TEXT, PRIMARY KEY (ItemId, Name))",
-                                // covering index
-                                "create index if not exists Idx_ProviderIds1 on ProviderIds(ItemId,Name,Value)",
+                "create table if not exists ProviderIds (ItemId GUID, Name TEXT, Value TEXT, PRIMARY KEY (ItemId, Name))",
+                // covering index
+                "create index if not exists Idx_ProviderIds1 on ProviderIds(ItemId,Name,Value)",
 
-                                "create table if not exists Images (ItemId GUID NOT NULL, Path TEXT NOT NULL, ImageType INT NOT NULL, DateModified DATETIME, IsPlaceHolder BIT NOT NULL, SortOrder INT)",
-                                "create index if not exists idx_Images on Images(ItemId)",
+                "create table if not exists Images (ItemId GUID NOT NULL, Path TEXT NOT NULL, ImageType INT NOT NULL, DateModified DATETIME, IsPlaceHolder BIT NOT NULL, SortOrder INT)",
+                "create index if not exists idx_Images on Images(ItemId)",
 
-                                "create table if not exists People (ItemId GUID, Name TEXT NOT NULL, Role TEXT, PersonType TEXT, SortOrder int, ListOrder int)",
+                "create table if not exists People (ItemId GUID, Name TEXT NOT NULL, Role TEXT, PersonType TEXT, SortOrder int, ListOrder int)",
 
-                                "drop index if exists idxPeopleItemId",
-                                "create index if not exists idxPeopleItemId1 on People(ItemId,ListOrder)",
-                                "create index if not exists idxPeopleName on People(Name)",
+                "drop index if exists idxPeopleItemId",
+                "create index if not exists idxPeopleItemId1 on People(ItemId,ListOrder)",
+                "create index if not exists idxPeopleName on People(Name)",
 
-                                "create table if not exists "+ChaptersTableName+" (ItemId GUID, ChapterIndex INT, StartPositionTicks BIGINT, Name TEXT, ImagePath TEXT, PRIMARY KEY (ItemId, ChapterIndex))",
+                "create table if not exists " + ChaptersTableName + " (ItemId GUID, ChapterIndex INT, StartPositionTicks BIGINT, Name TEXT, ImagePath TEXT, PRIMARY KEY (ItemId, ChapterIndex))",
 
-                                createMediaStreamsTableCommand,
+                createMediaStreamsTableCommand,
 
-                                "create index if not exists idx_mediastreams1 on mediastreams(ItemId)",
+                "create index if not exists idx_mediastreams1 on mediastreams(ItemId)",
 
-                               };
+            };
 
             _connection.RunQueries(queries, Logger);
 
@@ -276,13 +273,11 @@ namespace MediaBrowser.Server.Implementations.Persistence
 
             _connection.AddColumn(Logger, ChaptersTableName, "ImageDateModified", "DATETIME");
 
-            string[] postQueries =
-
-                                {
+            string[] postQueries = {
                 // obsolete
                 "drop index if exists idx_TypedBaseItems",
                 "drop index if exists idx_mediastreams",
-                "drop index if exists idx_"+ChaptersTableName,
+                "drop index if exists idx_" + ChaptersTableName,
                 "drop index if exists idx_UserDataKeys1",
                 "drop index if exists idx_UserDataKeys2",
                 "drop index if exists idx_TypeTopParentId3",
@@ -333,7 +328,7 @@ namespace MediaBrowser.Server.Implementations.Persistence
 
                 // covering index
                 "create index if not exists idx_UserDataKeys3 on UserDataKeys(ItemId,Priority,UserDataKey)"
-                };
+            };
 
             _connection.RunQueries(postQueries, Logger);
 
@@ -346,8 +341,7 @@ namespace MediaBrowser.Server.Implementations.Persistence
             //await Vacuum(_connection).ConfigureAwait(false);
         }
 
-        private readonly string[] _retriveItemColumns =
-        {
+        private readonly string[] _retriveItemColumns = {
             "type",
             "data",
             "StartDate",
@@ -415,8 +409,7 @@ namespace MediaBrowser.Server.Implementations.Persistence
             "InheritedParentalRatingValue"
         };
 
-        private readonly string[] _mediaStreamSaveColumns =
-        {
+        private readonly string[] _mediaStreamSaveColumns = {
             "ItemId",
             "StreamIndex",
             "StreamType",

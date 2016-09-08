@@ -3,6 +3,7 @@ using MediaBrowser.Controller.Entities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace MediaBrowser.Controller.Persistence
 {
@@ -11,6 +12,12 @@ namespace MediaBrowser.Controller.Persistence
     /// </summary>
     public interface IUserDataRepository : IRepository
     {
+        /// <summary>
+        /// Initializes the repository
+        /// </summary>
+        /// <returns>Task.</returns>
+        Task Initialize(IDbConnection connection, SemaphoreSlim writeLock);
+
         /// <summary>
         /// Saves the user data.
         /// </summary>
